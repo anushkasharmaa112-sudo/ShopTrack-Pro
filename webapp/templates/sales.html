@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Sales History{% endblock %}
+{% block content %}
+<h1>Sales History</h1>
+<p class="subtitle">All generated invoices</p>
+<div class="card">
+  <form class="toolbar" method="get">
+    <input name="q" value="{{ q }}" placeholder="Search bill # or customer" style="min-width:240px">
+    <button class="btn ghost" type="submit">Search</button>
+    <span class="spacer"></span>
+    <a class="btn ghost" href="{{ url_for('export_sales') }}">Export CSV</a>
+  </form>
+  <table>
+    <tr><th>Bill #</th><th>Customer</th><th>Date</th><th class="num">Total</th><th></th></tr>
+    {% for b in bills %}
+    <tr><td>#{{ b.id }}</td><td>{{ b.customer }}</td><td>{{ b.created_at }}</td><td class="num">{{ b.total_minor | currency }}</td>
+      <td class="num"><a class="btn ghost sm" href="{{ url_for('sale_detail', bill_id=b.id) }}">View</a></td></tr>
+    {% else %}
+    <tr><td colspan="5" class="empty">No invoices found.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

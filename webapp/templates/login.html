@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Sign In{% endblock %}
+{% block body %}
+<div class="auth-wrap">
+  <form class="auth-card" method="post">
+    <h1>ShopTrack Pro</h1>
+    <p class="subtitle">Sign in to access store inventory &amp; billing</p>
+    {% include "_flashes.html" %}
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label for="username">Username</label>
+    <input id="username" name="username" autocomplete="username" required autofocus>
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required>
+    <div style="margin-top:20px"><button class="btn block" type="submit">Sign In &rarr;</button></div>
+    <div class="demo-box">Evaluator Demo Credentials:<br>Username: <b>admin</b> &nbsp;|&nbsp; Password: <b>admin123</b></div>
+  </form>
+</div>
+{% endblock %}

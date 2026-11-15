@@ -42,7 +42,7 @@ A desktop Graphical User Interface (GUI) application built with **Python**, **Tk
 ## 📁 Project Architecture
 
 ```
-inventory_management/
+ShopTrack-Pro/
 ├── main.py                 # Application entry point & sidebar navigation router
 ├── services.py             # Business layer: ProductService, BillingService, ReportService
 ├── database.py             # SQLite connection context, schema, corruption check
@@ -57,6 +57,12 @@ inventory_management/
 │   ├── billing.py          # POS cart, stock verification, atomic checkout, receipt modal
 │   ├── sales.py            # Invoice history, line item drilldown, receipt reprint
 │   └── reports.py          # Low stock alerts, 1-click restock, sales leaderboard
+├── webapp/                 # Browser-based version (Flask) sharing the same services & database
+│   ├── app.py              # Routes: login/setup, dashboard, products, billing, sales, reports, CSV export
+│   ├── helpers.py          # Currency formatting & validation (Tkinter-free)
+│   ├── requirements.txt
+│   ├── templates/          # Jinja2 HTML pages
+│   └── static/style.css
 ├── shop.db                 # Auto-seeded SQLite database
 ├── PRESENTATION_SLIDES.md  # 8-slide presentation deck & 3-member script
 └── README.md
@@ -72,7 +78,7 @@ inventory_management/
 
 ### Running the App
 ```bash
-cd /Users/sanjeev/.gemini/antigravity/scratch/inventory_management
+cd ShopTrack-Pro
 python3 main.py
 ```
 
@@ -80,6 +86,14 @@ python3 main.py
 ```bash
 python3 test_app.py
 ```
+
+### Running the Web App
+The web version uses the same `shop.db`, `services.py`, `database.py` and `auth.py`, so products, bills and users are shared with the desktop app.
+```bash
+pip install -r webapp/requirements.txt
+python3 webapp/app.py
+```
+Then open http://localhost:5000 in your browser. Set `PORT` to change the port and `SHOPTRACK_SECRET_KEY` to keep logins valid across restarts.
 
 ---
 

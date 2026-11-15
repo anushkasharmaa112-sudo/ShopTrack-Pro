@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Billing{% endblock %}
+{% block content %}
+<h1>Billing</h1>
+<p class="subtitle">Build a cart and generate a customer invoice</p>
+<div class="grid grid-billing">
+  <form class="card stack" method="post" action="{{ url_for('billing_add') }}">
+    <h2>Add Item</h2>
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <label for="customer-add">Customer Name</label>
+    <input id="customer-add" name="customer" value="{{ customer }}" placeholder="Walk-in Customer">
+    <label for="product_id">Product</label>
+    <select id="product_id" name="product_id" required>
+      <option value="">Select a product…</option>
+      {% for p in products %}
+      <option value="{{ p.id }}" {{ 'disabled' if p.quantity == 0 }}>{{ p.name }} — {{ p.price_minor | currency }} ({{ p.quantity }} in stock)</option>
+      {% endfor %}
+    </select>
+    <label for="quantity">Quantity</label>
+    <input id="quantity" name="quantity" type="number" min="1" value="1" required>
+    <div style="margin-top:18px"><button class="btn block" type="submit">Add to Cart</button></div>
+  </form>
+  <div class="card">
+    <h2>Cart</h2>
+    <table>
+      <tr><th>Product</th><th class="num">Unit Price</th><th class="num">Qty</th><th class="num">Line Total</th><th></th></tr>
+      {% for l in lines %}
+      <tr>
+        <td>{{ l.product.name }}</td><td class="num">{{ l.product.price_minor | currency }}</td>
+        <td class="num">{{ l.quantity }}</td><td class="num">{{ l.line_total | currency }}</td>
+        <td class="num">
+          <form method="post" action="{{ url_for('billing_remove', product_id=l.product.id) }}">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn ghost sm" type="submit">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="empty">Cart is empty. Add products from the left.</td></tr>
+      {% endfor %}
+    </table>
+    <div class="total-row"><span>Total</span><span>{{ total | currency }}</span></div>
+    {% if lines %}
+    <form method="post" action="{{ url_for('billing_checkout') }}" onsubmit="this.querySelector('button').disabled=true;">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <input type="hidden" name="customer" value="{{ customer }}" id="customer-checkout">
+      <button class="btn success block" type="submit">Complete Sale &amp; Generate Invoice</button>
+    </form>
+    <form method="post" action="{{ url_for('billing_clear') }}" style="margin-top:8px">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn ghost block" type="submit">Clear Cart</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+<script>
+  const add = document.getElementById('customer-add'), chk = document.getElementById('customer-checkout');
+  if (add && chk) add.addEventListener('input', () => chk.value = add.value);
+</script>
+{% endblock %}

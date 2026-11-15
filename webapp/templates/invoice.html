@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Invoice #{{ bill.id }}{% endblock %}
+{% block content %}
+<div class="toolbar no-print">
+  <a class="btn ghost" href="{{ url_for('sales') }}">&larr; Back to Sales</a>
+  <span class="spacer"></span>
+  <button class="btn" onclick="window.print()">Print Invoice</button>
+</div>
+<div class="card invoice">
+  <div class="invoice-head">
+    <div><div class="shop">ShopTrack Pro</div><div class="muted">Tax Invoice</div></div>
+    <div style="text-align:right"><div><b>Invoice #{{ bill.id }}</b></div><div class="muted">{{ bill.created_at }}</div></div>
+  </div>
+  <p><span class="muted">Billed to:</span> <b>{{ bill.customer }}</b></p>
+  <table>
+    <tr><th>#</th><th>Product</th><th class="num">Unit Price</th><th class="num">Qty</th><th class="num">Line Total</th></tr>
+    {% for i in items %}
+    <tr><td>{{ loop.index }}</td><td>{{ i.product_name }}</td><td class="num">{{ i.unit_price_minor | currency }}</td><td class="num">{{ i.quantity }}</td><td class="num">{{ i.line_total_minor | currency }}</td></tr>
+    {% endfor %}
+  </table>
+  <div class="total-row"><span>Grand Total</span><span>{{ bill.total_minor | currency }}</span></div>
+  <p class="muted" style="text-align:center">Thank you for shopping with us!</p>
+</div>
+{% endblock %}

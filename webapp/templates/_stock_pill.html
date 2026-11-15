@@ -1,0 +1,4 @@
+{% if not p.active %}<span class="pill archived">Archived</span>
+{% elif p.quantity == 0 %}<span class="pill out">Out of stock</span>
+{% elif p.quantity <= p.low_stock %}<span class="pill low">Low stock</span>
+{% else %}<span class="pill ok">In stock</span>{% endif %}

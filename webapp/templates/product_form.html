@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if product else 'Add' }} Product{% endblock %}
+{% block content %}
+<h1>{{ 'Edit Product #' ~ product.id if product else 'Add Product' }}</h1>
+<p class="subtitle">{{ 'Update product details and stock' if product else 'Add a new item to the catalog' }}</p>
+<form class="card stack" method="post" style="max-width:640px">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <label for="name">Product Name</label>
+  <input id="name" name="name" value="{{ values.name }}" required maxlength="100" autofocus>
+  <label for="category">Category</label>
+  <input id="category" name="category" value="{{ values.category }}" list="category-list" placeholder="General">
+  <datalist id="category-list">{% for c in categories %}<option value="{{ c }}">{% endfor %}</datalist>
+  <div class="form-row">
+    <div><label for="price">Price (₹)</label><input id="price" name="price" value="{{ values.price }}" placeholder="199.00" required inputmode="decimal"></div>
+    <div><label for="quantity">Stock Quantity</label><input id="quantity" name="quantity" type="number" min="0" value="{{ values.quantity }}" required></div>
+  </div>
+  <label for="low_stock">Low-Stock Threshold</label>
+  <input id="low_stock" name="low_stock" type="number" min="0" value="{{ values.low_stock }}">
+  <div style="margin-top:20px;display:flex;gap:10px">
+    <button class="btn success" type="submit">{{ 'Save Changes' if product else 'Add Product' }}</button>
+    <a class="btn ghost" href="{{ url_for('products') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Products{% endblock %}
+{% block content %}
+<h1>Products</h1>
+<p class="subtitle">Manage your catalog and stock levels</p>
+<div class="card">
+  <form class="toolbar" method="get">
+    <input name="q" value="{{ q }}" placeholder="Search name or category" style="min-width:240px">
+    <select name="category">
+      <option value="All">All categories</option>
+      {% for c in categories %}<option value="{{ c }}" {{ 'selected' if c == category }}>{{ c }}</option>{% endfor %}
+    </select>
+    <label style="margin:0;font-weight:normal"><input type="checkbox" name="archived" value="1" {{ 'checked' if show_archived }}> Show archived</label>
+    <button class="btn ghost" type="submit">Filter</button>
+    <span class="spacer"></span>
+    <a class="btn ghost" href="{{ url_for('export_products') }}">Export CSV</a>
+    <a class="btn success" href="{{ url_for('product_new') }}">+ Add Product</a>
+  </form>
+  <table>
+    <tr><th>ID</th><th>Name</th><th>Category</th><th class="num">Price</th><th class="num">Stock</th><th class="num">Low at</th><th>Status</th><th>Actions</th></tr>
+    {% for p in products %}
+    <tr class="{{ 'archived' if not p.active }}">
+      <td>{{ p.id }}</td><td>{{ p.name }}</td><td>{{ p.category }}</td>
+      <td class="num">{{ p.price_minor | currency }}</td><td class="num">{{ p.quantity }}</td><td class="num">{{ p.low_stock }}</td>
+      <td>{% include "_stock_pill.html" %}</td>
+      <td>
+        <a class="btn ghost sm" href="{{ url_for('product_edit', product_id=p.id) }}">Edit</a>
+        {% if p.active %}
+        <form class="inline" method="post" action="{{ url_for('product_archive', product_id=p.id) }}" onsubmit="return confirm('Archive {{ p.name|e }}? It will be hidden from billing.');">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn danger sm" type="submit">Archive</button>
+        </form>
+        {% else %}
+        <form class="inline" method="post" action="{{ url_for('product_restore', product_id=p.id) }}">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn success sm" type="submit">Restore</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8" class="empty">No products match your filters.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

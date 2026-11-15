@@ -1,0 +1,6 @@
+<form class="restock" method="post" action="{{ url_for('restock', product_id=p.id) }}">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <input type="hidden" name="back" value="{{ request.full_path }}">
+  <input type="number" name="quantity" min="1" value="{{ [p.low_stock * 2 - p.quantity, 1] | max }}" aria-label="Restock quantity">
+  <button class="btn success sm" type="submit">Restock</button>
+</form>

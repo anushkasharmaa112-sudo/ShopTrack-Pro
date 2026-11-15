@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h1>Reports</h1>
+<p class="subtitle">Inventory analytics and sales performance</p>
+<div class="grid grid-4">
+  <div class="card kpi"><div class="label">Lifetime Revenue</div><div class="value">{{ metrics.lifetime_revenue_minor | currency }}</div></div>
+  <div class="card kpi success"><div class="label">Lifetime Bills</div><div class="value">{{ metrics.lifetime_bills }}</div></div>
+  <div class="card kpi warning"><div class="label">Inventory Value</div><div class="value">{{ metrics.inventory_valuation_minor | currency }}</div></div>
+  <div class="card kpi danger"><div class="label">Low-Stock Items</div><div class="value">{{ metrics.low_stock_count }}</div></div>
+</div>
+<div class="grid grid-2">
+  <div class="card">
+    <h2>Category Valuation</h2>
+    <table>
+      <tr><th>Category</th><th class="num">Items</th><th class="num">Units</th><th class="num">Valuation</th></tr>
+      {% for c in categories %}
+      <tr><td>{{ c.category }}</td><td class="num">{{ c.items_count }}</td><td class="num">{{ c.total_units }}</td><td class="num">{{ c.valuation_minor | currency }}</td></tr>
+      {% else %}<tr><td colspan="4" class="empty">No active products.</td></tr>{% endfor %}
+    </table>
+  </div>
+  <div class="card">
+    <h2>Top 10 Best Sellers</h2>
+    <table>
+      <tr><th>#</th><th>Product</th><th class="num">Units Sold</th><th class="num">Revenue</th></tr>
+      {% for t in top_selling %}
+      <tr><td>{{ loop.index }}</td><td>{{ t.product_name }}</td><td class="num">{{ t.total_sold }}</td><td class="num">{{ t.total_revenue_minor | currency }}</td></tr>
+      {% else %}<tr><td colspan="4" class="empty">No sales recorded yet.</td></tr>{% endfor %}
+    </table>
+  </div>
+</div>
+<div class="card">
+  <h2>Stock Reorder Report</h2>
+  <table>
+    <tr><th>Product</th><th>Category</th><th class="num">Stock</th><th class="num">Threshold</th><th>Status</th><th>Quick Restock</th></tr>
+    {% for p in low_stock %}
+    <tr><td>{{ p.name }}</td><td>{{ p.category }}</td><td class="num">{{ p.quantity }}</td><td class="num">{{ p.low_stock }}</td><td>{% include "_stock_pill.html" %}</td><td>{% include "_restock_form.html" %}</td></tr>
+    {% else %}<tr><td colspan="6" class="empty">All products are sufficiently stocked.</td></tr>{% endfor %}
+  </table>
+</div>
+<div class="toolbar no-print">
+  <a class="btn ghost" href="{{ url_for('export_products') }}">Export Products CSV</a>
+  <a class="btn ghost" href="{{ url_for('export_sales') }}">Export Sales CSV</a>
+</div>
+{% endblock %}
